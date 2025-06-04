@@ -3,13 +3,11 @@ import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:google_fonts/google_fonts.dart';
-
-import 'expense.dart';
+import 'package:intl/intl.dart';
 import 'expense_provider.dart';
 
 class AnalysisScreen extends StatefulWidget {
   const AnalysisScreen({super.key});
-
   @override
   State<AnalysisScreen> createState() => _AnalysisScreenState();
 }
@@ -38,6 +36,19 @@ class _AnalysisScreenState extends State<AnalysisScreen> {
 
     final selectedDate = _selectedDay ?? _focusedDay;
     final selectedDayTotal = dailyTotals[DateTime(selectedDate.year, selectedDate.month, selectedDate.day)] ?? 0;
+
+    // Group expenses by month
+    final Map<DateTime, double> monthlyTotals = {};
+    for (var expense in expenses) {
+      final monthKey = DateTime(expense.date.year, expense.date.month);
+      monthlyTotals[monthKey] = (monthlyTotals[monthKey] ?? 0) + expense.amount;
+    }
+
+    // Convert monthlyTotals to a list of data points
+    final List<_MonthlyExpense> chartData = monthlyTotals.entries.map(
+          (e) => _MonthlyExpense(e.key, e.value),
+    ).toList()
+      ..sort((a, b) => a.date.compareTo(b.date));
 
     return Scaffold(
       appBar: AppBar(
@@ -85,9 +96,7 @@ class _AnalysisScreenState extends State<AnalysisScreen> {
                     padding: const EdgeInsets.all(4),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(8),
-                      color: isSameDay(day, _selectedDay)
-                          ? Colors.green[600]
-                          : Colors.transparent,
+                      color: isSameDay(day, _selectedDay) ? Colors.green[600] : Colors.transparent,
                     ),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -158,41 +167,29 @@ class _AnalysisScreenState extends State<AnalysisScreen> {
               ),
             ),
 
-            SfCircularChart(
-              title: ChartTitle(
-                text: 'Expense Distribution',
-                textStyle: GoogleFonts.poppins(fontWeight: FontWeight.w500),
-              ),
-              legend: Legend(isVisible: true),
-              series: <CircularSeries<Expense, String>>[
-                PieSeries<Expense, String>(
-                  dataSource: expenses,
-                  xValueMapper: (Expense exp, _) => exp.type,
-                  yValueMapper: (Expense exp, _) => exp.amount,
-                  dataLabelSettings: const DataLabelSettings(isVisible: true),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 20),
+            // Monthly Expenses Line Chart
             SfCartesianChart(
               title: ChartTitle(
-                text: 'Expenses Over Time',
+                text: 'Monthly Spending Trend',
                 textStyle: GoogleFonts.poppins(fontWeight: FontWeight.w500),
               ),
-              primaryXAxis: DateTimeAxis(),
-              primaryYAxis: NumericAxis(
-                title: AxisTitle(
-                    text: 'Amount (₹)', textStyle: GoogleFonts.poppins()),
+              primaryXAxis: CategoryAxis(
+                title: AxisTitle(text: 'Month', textStyle: GoogleFonts.poppins()),
+                labelStyle: GoogleFonts.poppins(),
               ),
-              series: <CartesianSeries<Expense, DateTime>>[
-                LineSeries<Expense, DateTime>(
-                  dataSource: expenses,
-                  xValueMapper: (Expense exp, _) => exp.date,
-                  yValueMapper: (Expense exp, _) => exp.amount,
+              primaryYAxis: NumericAxis(
+                title: AxisTitle(text: 'Amount (₹)', textStyle: GoogleFonts.poppins()),
+              ),
+              series: <CartesianSeries<dynamic, dynamic>>[
+                LineSeries<_MonthlyExpense, String>(
+                  dataSource: chartData,
+                  xValueMapper: (_MonthlyExpense data, _) =>
+                      DateFormat('MMM yyyy').format(data.date),
+                  yValueMapper: (_MonthlyExpense data, _) => data.amount,
                   color: Colors.green,
                   markerSettings: const MarkerSettings(isVisible: true),
-                ),
+                  dataLabelSettings: const DataLabelSettings(isVisible: true),
+                )
               ],
             ),
           ],
@@ -200,4 +197,11 @@ class _AnalysisScreenState extends State<AnalysisScreen> {
       ),
     );
   }
+}
+
+class _MonthlyExpense {
+  final DateTime date;
+  final double amount;
+
+  _MonthlyExpense(this.date, this.amount);
 }
