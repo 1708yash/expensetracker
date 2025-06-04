@@ -1,16 +1,43 @@
-# expensetracker
+# 💸 Expense Tracker App
 
-A new Flutter project.
+A modern and intuitive **Expense Tracker** built with **Flutter**, featuring dynamic visualizations, dark/light themes, monthly analytics, and smooth animations. Perfect for tracking personal spending with an elegant user interface.
 
-## Getting Started
+![Dashboard](assets/images/logo.png)
+---
 
-This project is a starting point for a Flutter application.
+## 📱 Features
 
-A few resources to get you started if this is your first Flutter project:
+- 📊 **Graphical Overview**: View monthly spending by category using bar charts.
+- 📅 **Calendar View**: Track daily expenses visually on a calendar.
+- 📈 **Monthly Trends**: Analyze expense trends month-by-month.
+- 💡 **Theme Support**: Toggle between dark mode and light mode.
+- ✨ **Smooth UI**: Clean design with animations and Material 3 principles.
+- ➕ **Add / Edit / Delete Expenses**: Easily manage your expenses.
+- 🔒 **Data Persistence**: Your data stays saved using Provider state management.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+---
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## 🚀 Try It Out
+
+👉 A released and ready-to-install APK is available under [Releases](https://github.com/your-username/your-repo-name/releases).  
+Download the latest version and try it on your Android device!
+
+---
+
+## 📦 Tech Stack
+
+- **Flutter**
+- **Provider** for state management
+- **Syncfusion Flutter Charts**
+- **TableCalendar** for date-based summaries
+- **Google Fonts** and **Flutter Animate** for UI polish
+
+
+# 1. Clone the repository and change directory
+cd your-repo-name
+
+# 2. Install dependencies
+flutter pub get
+
+# 3. Run the app
+flutter run
